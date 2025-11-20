@@ -3,8 +3,8 @@
 #include <cstdio>
 #include <cuda_runtime.h>
 
-// kernel
-__global__ void scale2(float* x, int n) {
+// 1D kernel
+__global__ void onedimkernel(float* x, int n) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
   if (i < n) x[i] *= 2.0f;
 }
@@ -21,7 +21,7 @@ int main() {
 
   const int B = 256;                                                     // block size (threads per block)
   const int G = (n + B - 1) / B;                                         // grid size
-  scale2<<<G, B>>>(d_x, n);                                              // launch kernel (G * B threads, each running scale2)
+  onedimkernel<<<G, B>>>(d_x, n);                                              // launch kernel (G * B threads, each running scale2)
   cudaDeviceSynchronize();                                               // wait until all GPU work is completed
 
   cudaMemcpy(h_x, d_x, n * sizeof(float), cudaMemcpyDeviceToHost);       // copy back floats from device to host
