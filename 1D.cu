@@ -1,4 +1,4 @@
-// nvcc scale2.cu -o scale2
+// nvcc 1D.cu -o 1D
 
 #include <cstdio>
 #include <cuda_runtime.h>
