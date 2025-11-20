@@ -7,10 +7,9 @@ __global__ void twodimkernel(float* x, int width, int height) {
   int col = blockIdx.x * blockDim.x + threadIdx.x;                              // x = column
   int row = blockIdx.y * blockDim.y + threadIdx.y;                              // y = row
 
-  // bounds check
-  if (row < height && col < width) {
+  if (row < height && col < width) {                                            // bounds check
     int idx = row * width + col;                                                // 2D -> 1D index
-    x[idx] *= 2.0f;
+    x[idx] *= 2.0f;                                                             // double the value at i 
   }
 }
 
@@ -28,16 +27,16 @@ __global__ void debug_kernel(int width, int height) {
 }
 
 int main() {
-  const int width = 4;
-  const int height = 4;
-  const int n = width * height;
+  const int width = 4;                                                           // number of columns
+  const int height = 4;                                                          // number of rows
+  const int n = width * height;                                                  // total number of elements (4*4 = 16)
 
-  float h_x[n];
-  for (int i = 0; i < n; ++i) h_x[i] = float(i);
+  float h_x[n];                                                                  // host array of n floats
+  for (int i = 0; i < n; ++i) h_x[i] = float(i);                                 // initialize host array
   
-  float* d_x = nullptr;
-  cudaMalloc(&d_x, n * sizeof(float));
-  cudaMemcpy(d_x, h_x, n * sizeof(float), cudaMemcpyHostToDevice);
+  float* d_x = nullptr;                                                          // device gpu pointer
+  cudaMalloc(&d_x, n * sizeof(float));                                           // allocate n floats on the GPU
+  cudaMemcpy(d_x, h_x, n * sizeof(float), cudaMemcpyHostToDevice);               // copy data from host array h_x -> device array d_x
 
   // 2D block and grid
   dim3 block(2, 2);                                                              // 2x2 = 4 threads per block
@@ -46,14 +45,13 @@ int main() {
     (height + block.y - 1) / block.y                                             // grid.y
   );
 
-  twodimkernel<<<grid, block>>>(d_x, width, height);
-  debug_kernel<<<grid, block>>>(width, height);
+  twodimkernel<<<grid, block>>>(d_x, width, height);                             // launch 2D kernel                             
+  debug_kernel<<<grid, block>>>(width, height);                                  // debug 2D kernel
   cudaDeviceSynchronize();
 
-  cudaMemcpy(h_x, d_x, n * sizeof(float), cudaMemcpyDeviceToHost);
-  cudaFree(d_x);
+  cudaMemcpy(h_x, d_x, n * sizeof(float), cudaMemcpyDeviceToHost);               // copy results from device array d_x -> host array h_x
+  cudaFree(d_x);                                                                 // free the device mem
 
-  // print as a 2D matrix to see rows/cols
   for (int row = 0; row < height; ++row) {
     for (int col = 0; col < width; ++col) {
       int idx = row * width + col;
