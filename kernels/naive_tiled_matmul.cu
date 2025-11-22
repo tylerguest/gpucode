@@ -6,7 +6,11 @@
 // A is row major: A[row * K + col]
 // B is row major: B[row * N + col]
 // C is row mahor: C[row * N + col]
-__global__ void matMulTiledKernel(const float* __restrict__ A, const float* __restrict__ B, float* __restrict__ C, int M, int K, int N) {
+__global__ void matMulTiledKernel(const float* __restrict__ A, 
+                                  const float* __restrict__ B, 
+                                  float* __restrict__ C, 
+                                  int M, int K, int N) 
+{
   // 2D indices within the block
   int tx = threadIdx.x;
   int ty = threadIdx.y;
