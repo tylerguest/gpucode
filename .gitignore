@@ -1,3 +1,17 @@
 bin/
 build/
 kernels/compiled
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+dist/
+*.so
+*.o
+*.ptx
+*.cubin
+*.nsys-rep
+*.ncu-rep

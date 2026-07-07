@@ -1,0 +1,7 @@
+numpy
+pytest
+torch
+triton
+matplotlib
+pandas
+pybind11
