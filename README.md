@@ -1,82 +1,64 @@
-# GPU Kernel Lab
+# GPU Code
 
-A CUDA and Triton kernel lab for implementing, testing, benchmarking, and profiling GPU kernels from first principles.
+A small CUDA learning repo focused on kernel concepts first.
 
-This project is designed as a portfolio-quality learning repo based on core ideas from *Programming Massively Parallel Processors*: thread hierarchy, memory coalescing, shared memory, reductions, scans, atomics, tiling, occupancy, and profiling.
+The current goal is simple: write one standalone `.cu` file per concept, compile it with `nvcc`, run it, and understand what the kernel is doing.
 
-The repo starts with foundational CUDA kernels and builds toward ML-relevant kernels such as matrix multiplication, softmax, LayerNorm, RMSNorm, and attention score computation.
+No Python bindings, no PyTorch extensions, no Triton, no CMake, and no benchmark framework yet. Those can come later after the CUDA basics feel natural.
 
-## Goals
-
-- Implement core GPU programming patterns from scratch.
-- Build correctness tests against NumPy or PyTorch references.
-- Benchmark custom CUDA and Triton kernels against PyTorch where appropriate.
-- Use Nsight tools to study memory access, occupancy, and bottlenecks.
-- Document the performance tradeoffs behind each optimization.
-- Build a practical GPU programming portfolio project.
-
-## Kernel Status
-
-| Kernel | CUDA | Triton | Tests | Benchmarks | Main Concept |
-|---|---:|---:|---:|---:|---|
-| Vector Add | planned | no | planned | planned | thread indexing |
-| SAXPY | planned | no | planned | planned | memory bandwidth |
-| Reduce Sum | planned | no | planned | planned | parallel reduction |
-| Histogram | planned | no | planned | planned | atomics |
-| Prefix Scan | planned | no | planned | planned | parallel scan |
-| Transpose | planned | no | planned | planned | coalescing/shared memory |
-| Stencil 1D/2D | planned | no | planned | planned | neighbor access |
-| Matmul | planned | planned | planned | planned | tiling |
-| Convolution 2D | planned | no | planned | planned | stencil/tiling |
-| Softmax | planned | planned | planned | planned | row-wise reduction |
-| LayerNorm | planned | planned | planned | planned | normalization |
-| RMSNorm | planned | planned | planned | planned | transformer norm |
-| Attention Scores | planned | planned | planned | planned | tiled ML workload |
-| Fused MLP | no | planned | planned | planned | kernel fusion |
-
-## Project Layout
+## Layout
 
 ```text
-gpu-kernel-lab/
-  cuda/          CUDA kernels, C++ wrappers, Python bindings, and CUDA tests
-  triton/        Triton kernels and tests
-  benchmarks/    CUDA, Triton, and PyTorch benchmark scripts
-  docs/          Notes connecting PMPP concepts to this repo's kernels
-  scripts/       Build, test, benchmark, profile, and cleanup helpers
+gpucode/
+  Makefile
+  kernels/
+    vector_add.cu
+  notes/
+    vector_add.md
 ```
 
-## Build
+## Build And Run
 
-The build system will use CMake with CUDA enabled. Python tests and benchmarks will call kernels through bindings once implemented.
+Build the first kernel:
 
 ```bash
-./scripts/build.sh
+make vector_add
 ```
 
-## Test
+Run it:
 
 ```bash
-./scripts/run_tests.sh
+./bin/vector_add
 ```
 
-## Benchmark
+Clean build outputs:
 
 ```bash
-./scripts/run_benchmarks.sh
+make clean
 ```
 
-## Profiling
+## Learning Order
 
-Nsight Compute profiling notes and commands will live in `docs/profiling_walkthrough.md` and `scripts/profile_nsight.sh`.
+Start with one concept at a time:
 
-## Development Approach
+1. `vector_add.cu`: indexing, launch config, memory allocation, copies.
+2. `saxpy.cu`: memory bandwidth style vector operation.
+3. `reduce_sum.cu`: shared memory and synchronization.
+4. `transpose.cu`: coalescing and shared-memory tiling.
+5. `matmul.cu`: 2D indexing and tiled compute.
 
-Each kernel should be completed with the same standard:
+## Current Kernel
 
-- CUDA or Triton implementation.
-- Correctness test against a trusted reference.
-- Benchmark entry.
-- Documentation of the main GPU concept.
-- Known limitations listed honestly.
+`kernels/vector_add.cu` teaches:
 
-The goal is not to beat cuBLAS or PyTorch immediately. The goal is to understand why optimized libraries are fast and to build the skills needed to reason about GPU performance.
+- `threadIdx.x`
+- `blockIdx.x`
+- `blockDim.x`
+- global thread indexing
+- bounds checks
+- `cudaMalloc`
+- `cudaMemcpy`
+- kernel launch syntax
+- `cudaFree`
+
+The point is not performance yet. The point is understanding the CUDA execution model.
