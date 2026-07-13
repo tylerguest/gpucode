@@ -14,6 +14,27 @@
 
 void launch_reduce_sum(const float* x, float* partial_sums, int n, int blocks, int threads_per_block);
 
+/*
+
+Test flow
+1. Choose n
+2. Choose threads/blocks
+3. Compute number of blocks
+4. Allocate CPU input and CPU partial-sum arrays
+5. Fill input with 1.0
+6. Allocate GPU input and GPU partial-sum arrays
+7. Copy input CPU->GPU
+8. Create timing events
+9. Warm up kernel
+10. Time kernel
+11. Copy partial sums GPU->CPU
+12. CPU sums partial sums
+13. Compare against expected n
+14. Print result
+15. Clean up events and GPU memory
+
+*/
+
 int main() {
   int n = 1 << 20;
   int threads_per_block = 256;
@@ -76,6 +97,6 @@ int main() {
 
   CUDA_CHECK(cudaFree(d_x));
   CUDA_CHECK(cudaFree(d_partial_sums));
-  
+
   return ok ? 0 : 1;
 }
